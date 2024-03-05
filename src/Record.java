@@ -15,8 +15,8 @@ public class Record {
             name = record.get(0);
             birthsday = record.get(1);
             sex = record.get(2);
-        } catch(Throwable e) {
-            System.out.println( "I`am so sorry, but record is impossible");
+        } catch (Throwable e) {
+            System.out.println("I`am so sorry, but record is impossible");
         }
     }
 
@@ -39,6 +39,4 @@ public class Record {
         LocalDate date = LocalDate.parse(bi, formatter);
         return Period.between(date, LocalDate.now()).getYears();
     }
-
-
 }

@@ -8,4 +8,3 @@ public class Main {
         app.inputHandler();
     }
 }
-

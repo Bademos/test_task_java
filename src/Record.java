@@ -1,4 +1,5 @@
 import java.lang.reflect.Array;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDate;
 import java.time.Period;
@@ -32,6 +33,16 @@ public class Record {
         } catch (Throwable e) {
             System.out.println("Incorrect response ");
         }
+    }
+
+    public static void pushListOfRecords(ArrayList<ArrayList<String>> list, Statement stmt) throws SQLException {
+        StringBuilder request = new StringBuilder("INSERT INTO employees VAlUES");
+
+        for(ArrayList<String>record :list) {
+            String recordString = String.format("('%s', '%s', '%s')", record.get(0), record.get(1), record.get(2));
+            request.append(recordString).append(',');
+        }
+        stmt.execute(request.substring(0, request.length()-1));
     }
 
     public static Integer getAge(String bi) {

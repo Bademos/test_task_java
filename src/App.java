@@ -3,7 +3,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class App {
-    Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/cats", "postgres", "postgres");
+    Connection con = DriverManager.getConnection(Constants.url, Constants.user, Constants.password);
     Statement stmt = con.createStatement();
     String[] args;
 
@@ -14,13 +14,13 @@ public class App {
     public static String generateString(Integer n) {
         int leftLimit = 97; // буква 'a'
         int rightLimit = 122; // буква 'z'
-        String res = "";
+        StringBuilder res = new StringBuilder();
         for (int i = 0; i < 3; i++) {
             Random random = new Random();
             String generatedString = random.ints(leftLimit, rightLimit + 1).limit(n).collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append).toString();
-            res += generatedString.substring(0, 1).toUpperCase() + generatedString.substring(1) + " ";
+            res.append(generatedString.substring(0, 1).toUpperCase()).append(generatedString.substring(1)).append(" ");
         }
-        return res;
+        return res.toString();
     }
 
     public static ArrayList<String> generateRecord() {
@@ -50,10 +50,18 @@ public class App {
             request.append(recordString).append(',');
             System.out.println(i);
         }
-
-        System.out.println(request);
-        System.out.println(request.substring(0, request.length() - 2));
         return request.substring(0, request.length() - 1);
+    }
+
+    public static ArrayList<ArrayList<String>> generateListOfRecords() {
+        Integer n = 10;
+        ArrayList<ArrayList<String>>listOfRecords = new ArrayList<>();
+
+        for (int i = 0; i < n; ++i) {
+            listOfRecords.add(generateRecord());
+            System.out.println(i);
+        }
+        return listOfRecords;
     }
 
     public void inputHandler() throws SQLException {
@@ -72,16 +80,17 @@ public class App {
             case "3": {
                 ResultSet rs = stmt.executeQuery("SELECT *, DATE_PART('YEAR', Age(birthsday)) FROM employees " + "ORDER by name ASC;");
                 while (rs.next()) {
-                    System.out.println(rs.getString(1) + " " + rs.getString(2) + " " + rs.getString(3) + " " + rs.getString(4));
+                    System.out.println(rs.getString(1) + "\t\t" + rs.getString(2) + "\t" + rs.getString(3) + " " + rs.getString(4));
                 }
                 break;
             }
             case "4":
-                stmt.execute(generateRecords());
+                //stmt.execute(generateRecords());
+                Record.pushListOfRecords(generateListOfRecords(),stmt);
                 break;
             case "5": {
                 Long start = System.currentTimeMillis();
-                ResultSet rs = stmt.executeQuery("SELECT * FROM employees " + //, DATE_PART('YEAR', Age(birthsday))
+                ResultSet rs = stmt.executeQuery("SELECT * FROM employees " +  //, DATE_PART('YEAR', Age(birthsday))" +
                         "WHERE sex='Male' AND name LIKE 'F%'" + "ORDER by name ASC;");
                 Long end = System.currentTimeMillis();
 
